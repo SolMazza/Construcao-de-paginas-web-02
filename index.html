@@ -1,88 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue CRUD Tarefas</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"
-    />
-  </head>
-  <body>
-    <div id="app" class="section">
-      <div class="container">
-        <h1 class="title">Gerenciador de Tarefas</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPW 2</title>
+</head>
+<body>
+    Title: <input type="text" name="title" id="inputTitle">
 
-        <task-form
-          :tarefa-para-editar="tarefaEditando"
-          @adicionar="adicionarTarefa"
-          @atualizar="atualizarTarefa"
-          @cancelar-edicao="cancelarEdicao"
-        ></task-form>
+    Year: <input type="text" name="year" id="inputYear">
+           <button onclick="save()">Save</button>
+           <button onclick="show()">Show</button>
+<div id="resultSave"></div>
+    <script>
+       let books = []
 
-        <div v-for="(task, index) in tasks" :key="task.id">
-          <cpw2-task
-            :status="task.status"
-            :description="task.description"
-            @update-task-status="task.status = $event"
-            @editar="editarTarefa(task)"
-            @remover="removerTarefa(task.id)"
-          ></cpw2-task>
-        </div>
+       function save(){
 
-        <pre>{{ tasks }}</pre>
-      </div>
-    </div>
+       let inputTitle = document.getElementById("inputTitle").value;
+       let inputYear = document.getElementById("inputYear").value;
+       books.push(inputTitle + " " + inputYear);
 
-    <script type="module">
-      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
-      import ListComponent from "./ListComponent.js";
-      import FormComponent from "./FormComponent.js";
 
-      const app = createApp({
-        data() {
-          return {
-            tasks: [],
-            tarefaEditando: null,
-            nextId: 1,
-          };
-        },
-        methods: {
-          adicionarTarefa(descricao) {
-            this.tasks.push({
-              id: this.nextId++,
-              description: descricao,
-              status: false,
-            });
-          },
-          removerTarefa(id) {
-            this.tasks = this.tasks.filter((task) => task.id !== id);
-            if (this.tarefaEditando?.id === id) {
-              this.tarefaEditando = null;
-            }
-          },
-          editarTarefa(task) {
-            this.tarefaEditando = { ...task }; 
-          },
-          atualizarTarefa(novaDescricao) {
-            const tarefa = this.tasks.find(
-              (t) => t.id === this.tarefaEditando.id
-            );
-            if (tarefa) {
-              tarefa.description = novaDescricao;
-            }
-            this.tarefaEditando = null;
-          },
-          cancelarEdicao() {
-            this.tarefaEditando = null;
-          },
-        },
-      });
 
-      app.component("cpw2-task", ListComponent);
-      app.component("task-form", FormComponent);
-      app.mount("#app");
+       }
+
+       function show(){
+       for(const key in books){
+            document.getElementById("resultSave").textContent += books[key];
+       }
+
+       }
     </script>
-  </body>
+</body>
 </html>
