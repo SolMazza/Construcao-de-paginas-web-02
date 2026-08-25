@@ -23,7 +23,7 @@ function save() {
 
 function show() {
     for (const book in books) {
-        document.getElementById("titleResult").textContent += books[book].title;
+        document.getElementById("listResult").textContent += books[book].title;
         document.getElementById("yearResult").textContent += books[book].year;
     }
 }
