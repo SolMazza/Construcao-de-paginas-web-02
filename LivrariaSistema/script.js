@@ -11,11 +11,11 @@ function save() {
     let inputYear = document.getElementById("inputYear").value;
 
 
-    if (inputTitle.trim() !== "") {
+    if (inputTitle.trim() == "") {
         alert(`digite o título!`)
     }
 
-    if (inputYear.trim() !== "") {
+    if (inputYear.trim() == "") {
         alert(`digite o Ano!`)
     }
 
