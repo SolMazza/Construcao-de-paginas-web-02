@@ -10,11 +10,22 @@ function save() {
     let inputTitle = document.getElementById("inputTitle").value;
     let inputYear = document.getElementById("inputYear").value;
 
+
+    if (inputTitle.trim() !== "") {
+        alert(`digite o título!`)
+    }
+
+    if (inputYear.trim() !== "") {
+        alert(`digite o Ano!`)
+    }
+
     // Cria o objeto livro
     let book = {
         title: inputTitle,
         year: inputYear
     };
+
+
 
     // Adiciona o livro ao array
     books.push(book);
@@ -22,38 +33,34 @@ function save() {
     //coloca um array(lista) de livros no localStorage do navegador, JSON.stringify Transforma objeto em json
     localStorage.setItem("books", JSON.stringify(books));
 }
-
 function show() {
 
+    let contadorLivros = document.getElementById("bookCont");
+    contadorLivros.textContent = `${books.length} ${books.length == 1 ? " Livro" : " Livros"}`;
+
     // Limpa o conteúdo anterior
-    divPrincipal.innerHTML = "";
+    listaPrincipal.textContent = "";
 
     // Cria o <dl>
     const dlList = document.createElement("dl");
-    divPrincipal.appendChild(dlList);
+    listaPrincipal.appendChild(dlList);
 
     books.forEach((book, index) => {
 
         const dtTitle = document.createElement("dt");
         const ddYear = document.createElement("dd");
 
-        let title = book.title;
-        let year = book.year;
+        let title = book.title.trim();
+        let year = book.year.trim();
 
-        if (title.trim() !== "") {
+        dtTitle.id = `titleResult${index}`;
+        dtTitle.textContent = title;
+        dlList.appendChild(dtTitle);
 
-            dtTitle.id = `titleResult${index}`;
-            dtTitle.textContent = title;
+        ddYear.id = `yearResult${index}`;
+        ddYear.textContent = year;
+        dtTitle.appendChild(ddYear);
 
-            dlList.appendChild(dtTitle);
-        }
-        if (year.trim() !== "") {
-
-            ddYear.id = `yearResult${index}`;
-            ddYear.textContent = year;
-
-            dtTitle.appendChild(ddYear);
-        }
     });
 }
 
