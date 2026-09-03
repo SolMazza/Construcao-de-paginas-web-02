@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Livros</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+
+<body onload="load()">
+    <h1>Livros</h1>
+
+    <p>
+        Título: <input type="text" name="title" id="inputTitle" />
+        Ano: <input type="text" name="year" id="inputYear" />
+        <button onclick="save()">Salvar</button>
+    </p>
+
+    <p id="bookCount"></p>
+
+    <!-- Mostra o resultado-->
+    <div id="bookList"></div>
+
+    <script>
+
+        // Array de objetos Livros (global)
+        var books = [];
+
+        // Declara a função save, chamada ao clicar no botão Salvar
+        function save() {
+            // Pega a referência do input de título
+            let inputTitle = document.getElementById('inputTitle');
+            // Lê o valor digitado no título, removendo espaços extras
+            let titleValue = inputTitle.value.trim();
+
+            // Pega a referência do input de ano
+            let inputYear = document.getElementById("inputYear");
+            // Lê o valor digitado no ano, removendo espaços extras
+            let yearValue = inputYear.value.trim();
+
+            // Verifica se o título está vazio
+            if (titleValue === "") {
+                // Avisa o usuário que o título é obrigatório
+                alert("Informe o título do livro.");
+                // Interrompe a execução da função
+                return;
+            }
+
+            // Cria o objeto livro com título e ano
+            let book = { "title": titleValue, "year": yearValue };
+
+            // Coloca o objeto livro no array
+            books.push(book);
+
+            // Persiste o array atualizado no localStorage
+            persist();
+
+            // Limpa o campo de título
+            inputTitle.value = "";
+            // Limpa o campo de ano
+            inputYear.value = "";
+            // Devolve o foco ao campo de título
+            inputTitle.focus();
+
+            // Atualiza a lista exibida na tela
+            show();
+        }
+
+        // Declara a função removeBook, que remove um livro pelo índice
+        function removeBook(index) {
+            // Remove 1 elemento do array a partir da posição index
+            books.splice(index, 1);
+            // Persiste o array atualizado no localStorage
+            persist();
+            // Atualiza a lista exibida na tela
+            show();
+        }
+
+        // Declara a função persist, responsável por salvar no localStorage
+        function persist() {
+            // Converte o array de livros em string JSON e salva no localStorage
+            localStorage.setItem("books", JSON.stringify(books));
+        }
+
+        // Declara a função show, responsável por exibir a lista de livros
+        function show() {
+            // Pega a referência do elemento que lista os livros
+            let list = document.getElementById("bookList");
+            // Pega a referência do elemento que mostra a contagem de livros
+            let count = document.getElementById("bookCount");
+
+            // Limpa o conteúdo atual da lista antes de redesenhar
+            list.innerHTML = "";
+            // Atualiza o texto com a quantidade de livros (singular ou plural)
+            count.textContent = books.length + (books.length === 1 ? " livro" : " livros");
+
+            // books.entries() gera pares [index, book] para cada item do array;
+            // o for...of percorre esses pares e o destructuring [index, book] extrai
+            // o índice e o objeto livro diretamente em cada volta do laço
+            for (const [index, book] of books.entries()) {
+                // Cria um elemento div para representar o livro
+                let item = document.createElement("div");
+                // Aplica a classe de estilo ao item
+                item.className = "item";
+                // Define o texto exibido com o título e o ano do livro
+                item.innerHTML = "<span>" + book.title + " (" + book.year + ")</span>";
+
+                // Cria o botão de remover
+                let removeBtn = document.createElement("button");
+                // Define o texto do botão
+                removeBtn.textContent = "Remover";
+                // Define a ação de clique do botão
+                removeBtn.onclick = function () {
+                    // Chama a remoção do livro pelo índice correspondente
+                    removeBook(index);
+                };
+
+                // Adiciona o botão dentro do item
+                item.appendChild(removeBtn);
+                //cria o botão para editar
+                let editBotton = document.createElement("button");
+                //adiciona o texto editar dentro do html button (visível usuário)
+                editBotton.textContent = "Editar";
+                //Função para quando o usuário clicar no botão poder editar
+                editBotton.onclick = function () {
+                    document.getElementById('inputTitle').value = book.title;
+                    document.getElementById('inputYear').value = book.year;
+                    removeBook(index);
+                    
+                }
+
+                //adicionar o Botão de edição na div/item
+                item.appendChild(editBotton);
+
+                // Adiciona o item dentro da lista
+                list.appendChild(item);
+
+            }
+        }
+
+        // Declara a função load, executada ao carregar a página
+        function load() {
+
+            //cria o objeto do AJAX (que fará a comunicação com o servidor)
+            let xhr = new XMLHttpRequest();
+
+            //open define o método http -> Get vai fazer uma requisição ao servidor - data.json (lugar da requisição) - "true" define como assíncrono
+            xhr.open("GET", "data.json", true);
+
+            // Call Back função para tratamento da requisição e do retorno (código de segurança)
+            xhr.onload = function (){
+                if(xhr.status == "200") {
+                    //ResponseText =Corpo da respostado http (json)
+                    //json.parse transforma o json para objeto JavaScript 
+                    books = JSON.parse(xhr.responseText());
+                }
+            }
+
+            // Recupera a string de livros salva no localStorage
+            let strBooks = localStorage.getItem("books");
+            // Verifica se existe algum valor salvo
+            if (strBooks !== null) {
+                // Converte a string JSON de volta para um array de objetos
+                books = JSON.parse(strBooks);
+            }
+            // Exibe a lista de livros na tela
+            show();
+        }
+
+    </script>
+
+</body>
+
+</html>
