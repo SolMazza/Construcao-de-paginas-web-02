@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.global.min.js">
+    </script>
+</head>
+<!-- https://cpw2.rpmhub.dev/vuejs/vuejs.html -->
+<body>
+    <div id="app">
+
+        <button v-on:click="loadBooks">Load Books</button>
+
+        <!-- quando temos chaves dentro de chaves, chamamos de interpolação essa interpolação está chamando message do script -->
+        <!-- {{message}} -->
+
+        <!--O V-model é um atributo no html que vamos chamar de atributo diretivo, pois conecta a varíavel do vue com o html  -->
+        <input type="text" v-model="message">
+        <ul>
+            <li v-for="book in books" :key="book.title">
+                {{book.title}} by {{book.author}}
+                <input type="text" v-model="book.title">
+            </li>
+        </ul>
+
+    </div>
+
+
+
+    <script>
+        //IMPORTANTE "vue" se inscrever com Vue (V maiúsculo)
+        const app = Vue.createApp(
+
+            { //essas chaves se referem ao comportamento do APP 
+                data() { // objeto de dados
+                    return { //return retorna um objeto, que serão os dados
+                        message: 'Hello vue cpw2!',
+                        books: []
+                    }
+                },
+                methods: {
+                    async loadBooks() {
+                        try {
+                            let response = await fetch("books.json");
+                            this.books = await response.json();
+                        } catch (error) {
+                            console.log(response);
+                        }
+                    }
+                }
+
+            }
+        );
+        app.mount("#app")
+
+    </script>
+</body>
+
+</html>
